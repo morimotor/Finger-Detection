@@ -7,29 +7,29 @@
 
 using namespace std;
 
-// ƒ‰ƒWƒAƒ““x•ÏŠ·
+// ãƒ©ã‚¸ã‚¢ãƒ³åº¦å¤‰æ›
 #define rad_to_deg(rad) rad * 180.0f / PI
 #define deg_to_rad(deg) deg * PI / 180.0f
 
-// ƒEƒBƒ“ƒhƒEƒTƒCƒY
+// ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚µã‚¤ã‚º
 #define WINDOW_SIZE_X 320
 #define WINDOW_SIZE_Y 240
 
-// ƒ‰ƒxƒŠƒ“ƒOÅ¬ƒTƒCƒY
+// ãƒ©ãƒ™ãƒªãƒ³ã‚°æœ€å°ã‚µã‚¤ã‚º
 #define MIN_SIZE 500
 
-// “Á’¥“_‚ÌŠÔŠu
+// ç‰¹å¾´ç‚¹ã®é–“éš”
 #define POINT_SPACING 14
 
-// wæ‚ÌÅ‘åŠp“x
+// æŒ‡å…ˆã®æœ€å¤§è§’åº¦
 #define MIN_DEG 110
 
-// w‚Ì•t‚¯ª‚ÌÅ¬Šp“x
+// æŒ‡ã®ä»˜ã‘æ ¹ã®æœ€å°è§’åº¦
 #define MAX_DEG 260
 
 
 
-// HSV‚ÌŠe—v‘f‚Ìw’è‚µ‚½loewr`upper‚ÌF‚ğ’Šo
+// HSVã®å„è¦ç´ ã®æŒ‡å®šã—ãŸloewrï½upperã®è‰²ã‚’æŠ½å‡º
 void HsvColorExtraction(IplImage* src_img, IplImage* dst_img, int *_lower, int *_upper)
 {
 	IplImage *hsv_img;
@@ -45,7 +45,7 @@ void HsvColorExtraction(IplImage* src_img, IplImage* dst_img, int *_lower, int *
 	hsv_img = cvCreateImage(cvGetSize(src_img), src_img->depth, src_img->nChannels);
 	cvCvtColor(src_img, hsv_img, CV_BGR2HSV);
 
-	//3Ch‚ÌLUTì¬
+	//3Chã®LUTä½œæˆ
 	lut = cvCreateMat(256, 1, CV_8UC3);
 
 	lower[0] = _lower[0];
@@ -75,32 +75,32 @@ void HsvColorExtraction(IplImage* src_img, IplImage* dst_img, int *_lower, int *
 					val[k] = 0;
 			}
 		}
-		//LUT‚Ìİ’è
+		//LUTã®è¨­å®š
 		cvSet1D(lut, i, cvScalar(val[0], val[1], val[2]));
 	}
 
-	//3Ch‚²‚Æ‚ÌLUT•ÏŠ·iŠeƒ`ƒƒƒ“ƒlƒ‹‚²‚Æ‚É‚Q’l‰»ˆ—j
+	//3Chã”ã¨ã®LUTå¤‰æ›ï¼ˆå„ãƒãƒ£ãƒ³ãƒãƒ«ã”ã¨ã«ï¼’å€¤åŒ–å‡¦ç†ï¼‰
 	cvLUT(hsv_img, hsv_img, lut);
 	cvReleaseMat(&lut);
 
-	//Šeƒ`ƒƒƒ“ƒlƒ‹‚²‚Æ‚ÌIplImage
+	//å„ãƒãƒ£ãƒ³ãƒãƒ«ã”ã¨ã®IplImage
 	ch1_img = cvCreateImage(cvGetSize(hsv_img), hsv_img->depth, 1);
 	ch2_img = cvCreateImage(cvGetSize(hsv_img), hsv_img->depth, 1);
 	ch3_img = cvCreateImage(cvGetSize(hsv_img), hsv_img->depth, 1);
 
-	//ƒ`ƒƒƒ“ƒlƒ‹‚²‚Æ‚É“ñ’l‰»‚³‚ê‚½‰æ‘œ‚ğ‚»‚ê‚¼‚ê‚Ìƒ`ƒƒƒ“ƒlƒ‹‚É•ª‰ğ
+	//ãƒãƒ£ãƒ³ãƒãƒ«ã”ã¨ã«äºŒå€¤åŒ–ã•ã‚ŒãŸç”»åƒã‚’ãã‚Œãã‚Œã®ãƒãƒ£ãƒ³ãƒãƒ«ã«åˆ†è§£
 	cvSplit(hsv_img, ch1_img, ch2_img, ch3_img, NULL);
 
-	//3Ch‘S‚Ä‚ÌAND‚ğæ‚èAƒ}ƒXƒN‰æ‘œ‚ğì¬
+	//3Chå…¨ã¦ã®ANDã‚’å–ã‚Šã€ãƒã‚¹ã‚¯ç”»åƒã‚’ä½œæˆ
 	mask_img = cvCreateImage(cvGetSize(hsv_img), hsv_img->depth, 1);
 	cvAnd(ch1_img, ch2_img, mask_img);
 	cvAnd(mask_img, ch3_img, mask_img);
 
-	//“ü—Í‰æ‘œ‚Ìƒ}ƒXƒN—Ìˆæ‚ğo—Í‰æ‘œ‚ÖƒRƒs[
+	//å…¥åŠ›ç”»åƒã®ãƒã‚¹ã‚¯é ˜åŸŸã‚’å‡ºåŠ›ç”»åƒã¸ã‚³ãƒ”ãƒ¼
 	cvZero(dst_img);
 	cvCopy(src_img, dst_img, mask_img);
 
-	//‰ğ•ú
+	//è§£æ”¾
 	cvReleaseImage(&hsv_img);
 	cvReleaseImage(&ch1_img);
 	cvReleaseImage(&ch2_img);
@@ -109,7 +109,7 @@ void HsvColorExtraction(IplImage* src_img, IplImage* dst_img, int *_lower, int *
 
 }
 
-// 2‚Â‚ÌƒxƒNƒgƒ‹‚©‚ç‚»‚Ì‚È‚·Šp‚ğo‚·
+// 2ã¤ã®ãƒ™ã‚¯ãƒˆãƒ«ã‹ã‚‰ãã®ãªã™è§’ã‚’å‡ºã™
 float calcAngle(CvPoint first, CvPoint center, CvPoint last)
 {
 	CvPoint p1 = first, p2 = center, p3 = last, v1, v2;
@@ -135,31 +135,31 @@ float calcAngle(CvPoint first, CvPoint center, CvPoint last)
 
 int main(void)
 {
-	// ‰æ‘œ
+	// ç”»åƒ
 	IplImage *input_img;
 	IplImage *temp_img;
 	IplImage *nichi_img;
 
-	// HSV’Šo”ÍˆÍiH,S,Vj
+	// HSVæŠ½å‡ºç¯„å›²ï¼ˆH,S,Vï¼‰
 	int lower[3] = {0, 50, 0};
 	int upper[3] = {20, 255, 255};
 
-	// ƒ‰ƒxƒŠƒ“ƒO
+	// ãƒ©ãƒ™ãƒªãƒ³ã‚°
 	LabelingBS label;
 	LabelingBS::RegionInfo *regInfo;
 	LabelingBS::RSPIterator rspIterator;
 
 
-	// î•ñ
-	float gx, gy;	// dS
+	// æƒ…å ±
+	float gx, gy;	// é‡å¿ƒ
 	int max_size = 0;
 
 	input_img = cvLoadImage("file002.png", CV_LOAD_IMAGE_COLOR);
 	temp_img = cvCreateImage(cvSize(WINDOW_SIZE_X, WINDOW_SIZE_Y), IPL_DEPTH_8U, 3);
 	nichi_img = cvCreateImage(cvSize(WINDOW_SIZE_X, WINDOW_SIZE_Y), IPL_DEPTH_8U, 1);
 
-	cvNamedWindow("“ü—Í‰æ‘œ", CV_WINDOW_AUTOSIZE);
-	cvNamedWindow("o—Í‰æ‘œ", CV_WINDOW_AUTOSIZE);
+	cvNamedWindow("å…¥åŠ›ç”»åƒ", CV_WINDOW_AUTOSIZE);
+	cvNamedWindow("å‡ºåŠ›ç”»åƒ", CV_WINDOW_AUTOSIZE);
 
 
 
@@ -168,14 +168,14 @@ int main(void)
 
 	cvThreshold(temp_img, temp_img, 1, 255, CV_THRESH_BINARY);
 
-	// –c’£Eûk‚ÅŒŠ–„‚ß
+	// è†¨å¼µãƒ»åç¸®ã§ç©´åŸ‹ã‚
 	cvDilate(temp_img, temp_img);
 	//cvErode(temp_img, temp_img);
 
 	cvSmooth(temp_img, temp_img, CV_MEDIAN);
 
 
-	// 8bit“ñ’l‰æ‘œì¬(ƒ‰ƒxƒŠƒ“ƒO‚Ì‚½‚ß)
+	// 8bitäºŒå€¤ç”»åƒä½œæˆ(ãƒ©ãƒ™ãƒªãƒ³ã‚°ã®ãŸã‚)
 	for (int y = 0; y < WINDOW_SIZE_Y; y++)
 	{
 		for (int x = 0; x < WINDOW_SIZE_X; x++)
@@ -192,7 +192,7 @@ int main(void)
 		}
 	}
 
-	// ƒ‰ƒxƒŠƒ“ƒOˆ—
+	// ãƒ©ãƒ™ãƒªãƒ³ã‚°å‡¦ç†
 	short *buff = new short[WINDOW_SIZE_X * WINDOW_SIZE_Y];
 	label.Exec((unsigned char *)(nichi_img->imageData), buff, WINDOW_SIZE_X, WINDOW_SIZE_Y, true, MIN_SIZE);
 
@@ -204,16 +204,16 @@ int main(void)
 		int _max_x, _max_y, _min_x, _min_y;
 
 		regInfo = label.GetResultRegionInfo(i);
-		int nop = regInfo->GetNumOfPixels();		// —Ìˆæ‚Ì–ÊÏ(‰æ‘f”) 
-		regInfo->GetCenterOfGravity(_gx, _gy);		// —Ìˆæ‚ÌdS
-		regInfo->GetSize(_rw, _rh);					// —Ìˆæ‚ÌŠOÚ‹éŒ`ƒTƒCƒY
-		regInfo->GetMax(_max_x, _max_y);			// —Ìˆæ‚Ì‰E‰ºÀ•W
-		regInfo->GetMin(_min_x, _min_y);			// —Ìˆæ‚Ì¶ãÀ•W
+		int nop = regInfo->GetNumOfPixels();		// é ˜åŸŸã®é¢ç©(ç”»ç´ æ•°) 
+		regInfo->GetCenterOfGravity(_gx, _gy);		// é ˜åŸŸã®é‡å¿ƒ
+		regInfo->GetSize(_rw, _rh);					// é ˜åŸŸã®å¤–æ¥çŸ©å½¢ã‚µã‚¤ã‚º
+		regInfo->GetMax(_max_x, _max_y);			// é ˜åŸŸã®å³ä¸‹åº§æ¨™
+		regInfo->GetMin(_min_x, _min_y);			// é ˜åŸŸã®å·¦ä¸Šåº§æ¨™
 
 
-		if (max_size < nop)max_size = nop;	// MAXƒTƒCƒYXV
+		if (max_size < nop)max_size = nop;	// MAXã‚µã‚¤ã‚ºæ›´æ–°
 
-		//  ‚ÅˆÍ‚¤
+		// â–¡ã§å›²ã†
 		if (i == 0)cvRectangle(temp_img, cvPoint(_min_x, _min_y), cvPoint(_max_x, _max_y), cvScalar(0, 255, 255));
 		else if (i == 1)cvRectangle(temp_img, cvPoint(_min_x, _min_y), cvPoint(_max_x, _max_y), cvScalar(0, 255, 0));
 		else cvRectangle(temp_img, cvPoint(_min_x, _min_y), cvPoint(_max_x, _max_y), cvScalar(255, 255, 0));
@@ -222,17 +222,17 @@ int main(void)
 		{
 			gx = _gx;
 			gy = _gy;
-			printf("dS(%f, %f) –ÊÏ : %d(pix) ƒTƒCƒY(%d, %d)\n", _gx, _gy, nop, _rw, _rh);
+			printf("é‡å¿ƒ(%f, %f) é¢ç© : %d(pix) ã‚µã‚¤ã‚º(%d, %d)\n", _gx, _gy, nop, _rw, _rh);
 		}
 
 		if (gx < 0 || gx > WINDOW_SIZE_X)gx = -1.0f;
 		if (gy < 0 || gy > WINDOW_SIZE_Y)gy = -1.0f;
 	}
 
-	// dS
+	// é‡å¿ƒ
 	cvCircle(temp_img, cvPoint(gx, gy), 5, cvScalar(0, 255, 0), -1, CV_AA);
 
-	// ƒ‰ƒxƒŠƒ“ƒO‚ÌÅ‘åƒTƒCƒY‚Ì‚à‚Ì‚Ì‚İ‚ğc‚·
+	// ãƒ©ãƒ™ãƒªãƒ³ã‚°ã®æœ€å¤§ã‚µã‚¤ã‚ºã®ã‚‚ã®ã®ã¿ã‚’æ®‹ã™
 	for (int i = WINDOW_SIZE_X * WINDOW_SIZE_Y; i--;)
 	{
 		switch (buff[i])
@@ -242,28 +242,28 @@ int main(void)
 		}
 	}
 
-	// —ÖŠs
-	CvMemStorage *storage = cvCreateMemStorage(0); //ƒƒ‚ƒŠƒXƒgƒŒ[ƒW
-	CvSeq *contours = 0; //ƒV[ƒPƒ“ƒX
+	// è¼ªéƒ­
+	CvMemStorage *storage = cvCreateMemStorage(0); //ãƒ¡ãƒ¢ãƒªã‚¹ãƒˆãƒ¬ãƒ¼ã‚¸
+	CvSeq *contours = 0; //ã‚·ãƒ¼ã‚±ãƒ³ã‚¹
 	CvTreeNodeIterator it;
 
 
-	// —ÖŠsü‚è‚Ì“_
+	// è¼ªéƒ­å‘¨ã‚Šã®ç‚¹
 	int find_contour_num = cvFindContours(nichi_img, storage, &contours, sizeof(CvContour), CV_RETR_EXTERNAL, CV_CHAIN_APPROX_NONE);
-	//cvDrawContours(temp_img, contours, CV_RGB(255, 1, 1), CV_RGB(255, 1, 1), 1, 2, CV_AA, cvPoint(0, 0));	// —ÖŠs•`‰æ
+	//cvDrawContours(temp_img, contours, CV_RGB(255, 1, 1), CV_RGB(255, 1, 1), 1, 2, CV_AA, cvPoint(0, 0));	// è¼ªéƒ­æç”»
 	
 	if (max_size > MIN_SIZE)
 	{
 
-		// ƒcƒŠ[ƒm[ƒhƒCƒeƒŒ[ƒ^‚Ì‰Šú‰»
+		// ãƒ„ãƒªãƒ¼ãƒãƒ¼ãƒ‰ã‚¤ãƒ†ãƒ¬ãƒ¼ã‚¿ã®åˆæœŸåŒ–
 		cvInitTreeNodeIterator(&it, contours, 1);
 
-		int numCounter = 0;	// ˜A”Ô‚ÌƒJƒEƒ“ƒ^
+		int numCounter = 0;	// é€£ç•ªã®ã‚«ã‚¦ãƒ³ã‚¿
 		while ((contours = (CvSeq *)cvNextTreeNode(&it)) != NULL && contours->total > POINT_SPACING * 2)
 		{
-			// —ÖŠs‚ğ\¬‚·‚é’¸“_À•W‚ğæ“¾
-			CvPoint *prepre = CV_GET_SEQ_ELEM(CvPoint, contours, (POINT_SPACING)* (-2));	// 2‚Â‘O‚Ì“_
-			CvPoint *pre = CV_GET_SEQ_ELEM(CvPoint, contours, -(POINT_SPACING));			// 1‚Â‘O‚Ì“_
+			// è¼ªéƒ­ã‚’æ§‹æˆã™ã‚‹é ‚ç‚¹åº§æ¨™ã‚’å–å¾—
+			CvPoint *prepre = CV_GET_SEQ_ELEM(CvPoint, contours, (POINT_SPACING)* (-2));	// 2ã¤å‰ã®ç‚¹
+			CvPoint *pre = CV_GET_SEQ_ELEM(CvPoint, contours, -(POINT_SPACING));			// 1ã¤å‰ã®ç‚¹
 
 			CvPoint *point;
 
@@ -284,14 +284,14 @@ int main(void)
 				float deg = calcAngle(*prepre, *pre, *point);
 				float end_angle = calcAngle(cvPoint(pre->x + 1, pre->y), *pre, *point);
 
-				// wæ
+				// æŒ‡å…ˆ
 				if (deg < MIN_DEG)
 				{
 					//cvEllipse(temp_img, *pre, cvSize(10, 10), end_angle, 0, -deg, CV_RGB(0, 255, 0), -1, 8, 0);
 					cvCircle(temp_img, *pre, 6, cvScalar(255, 0, 0), -1, CV_AA);
 
 				}
-				// w‚Ì•t‚¯ª
+				// æŒ‡ã®ä»˜ã‘æ ¹
 				else if (deg > MAX_DEG)
 				{
 					//cvEllipse(temp_img, *pre, cvSize(10, 10), end_angle, 0, -deg, CV_RGB(0, 0, 255), -1, 8, 0);
@@ -312,20 +312,20 @@ int main(void)
 
 
 
-	// ‰æ‘œ•\¦
-	cvShowImage("“ü—Í‰æ‘œ", input_img);
-	cvShowImage("o—Í‰æ‘œ", temp_img);
+	// ç”»åƒè¡¨ç¤º
+	cvShowImage("å…¥åŠ›ç”»åƒ", input_img);
+	cvShowImage("å‡ºåŠ›ç”»åƒ", temp_img);
 
-	// ”CˆÓ‚ÌƒL[“ü—Í‚ª‚ ‚ê‚ÎI—¹
+	// ä»»æ„ã®ã‚­ãƒ¼å…¥åŠ›ãŒã‚ã‚Œã°çµ‚äº†
 	cvWaitKey(-1);
 	
 
-	// Œãˆ—
+	// å¾Œå‡¦ç†
 	cvReleaseImage(&input_img);
 	cvReleaseImage(&temp_img);
 	cvReleaseImage(&nichi_img);
 	cvReleaseMemStorage(&storage);
 	cvDestroyAllWindows();
-
+	delete buff;
 	return 0;
 }
